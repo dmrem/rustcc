@@ -1,3 +1,13 @@
+#[derive(Debug, Eq, PartialEq)]
 pub enum Token {
-    _ReplaceMe,
+    KeywordInt,
+    KeywordReturn,
+    Identifier(String),
+    NumericConstant(String),
+    OpenParenthesis,
+    CloseParenthesis,
+    OpenCurlyBrace,
+    CloseCurlyBrace,
+    Semicolon,
+    EOF,
 }

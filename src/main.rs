@@ -2,7 +2,6 @@ mod lexer;
 mod tokens;
 
 fn main() {
-    println!("Hello, world!");
     let args: Vec<String> = std::env::args().collect();
     let [_, file_path, ..] = &args.as_slice() else {
         panic!("Please provide a file name");
@@ -24,5 +23,6 @@ fn main() {
         }
     };
 
-    lexer::lex(file_contents);
+    let lexed = lexer::lex(file_contents.as_str());
+    println!("{:#?}", lexed);
 }
