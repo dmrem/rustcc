@@ -12,6 +12,13 @@ pub enum Statement {
 #[derive(Debug)]
 pub enum Expression {
     Constant(i32),
+    UnaryOperation(Operation, Box<Expression>),
+}
+#[derive(Debug)]
+pub enum Operation {
+    Negation,
+    BitwiseNot,
+    LogicalNot,
 }
 
 pub fn parse(tokens: &mut Vec<Token>) -> Program {
@@ -76,12 +83,23 @@ fn parse_statement(tokens: &mut Iter<Token>) -> Statement {
 }
 
 fn parse_expression(tokens: &mut Iter<Token>) -> Expression {
-    let num = match tokens.next().unwrap() {
-        Token::NumericConstant(s) => s,
-        token => panic!("Expected a numeric constant, but found {:?}", token),
+    return match tokens.next().unwrap() {
+        Token::NumericConstant(s) => Expression::Constant(
+            s.parse()
+                .unwrap_or_else(|_| panic!("Failed to parse '{}' as a number", s)),
+        ),
+        Token::Negation => {
+            Expression::UnaryOperation(Operation::Negation, Box::from(parse_expression(tokens)))
+        }
+        Token::BitwiseNot => {
+            Expression::UnaryOperation(Operation::BitwiseNot, Box::from(parse_expression(tokens)))
+        }
+        Token::LogicalNot => {
+            Expression::UnaryOperation(Operation::LogicalNot, Box::from(parse_expression(tokens)))
+        }
+        token => panic!(
+            "Expected a numeric constant or expression, but found {:?}",
+            token
+        ),
     };
-    return Expression::Constant(
-        num.parse()
-            .unwrap_or_else(|_| panic!("Failed to parse '{}' as a number", num)),
-    );
 }

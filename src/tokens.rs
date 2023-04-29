@@ -9,5 +9,8 @@ pub enum Token {
     OpenCurlyBrace,
     CloseCurlyBrace,
     Semicolon,
+    Negation,
+    BitwiseNot,
+    LogicalNot,
     EOF,
 }

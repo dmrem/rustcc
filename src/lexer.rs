@@ -9,8 +9,8 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
     lazy_static! {
         static ref REGEXES:Vec<Regex> = vec![
             Regex::new(r"^\s+").unwrap(), // whitespace
-            Regex::new(r"^int ").unwrap(),
-            Regex::new(r"^return ").unwrap(),
+            Regex::new(r"^int\s").unwrap(),
+            Regex::new(r"^return\s").unwrap(),
             Regex::new(r"^[a-zA-Z_][a-zA-Z0-9_]*").unwrap(),
             Regex::new(r"^[0-9]+(?:\.[0-9]+)?").unwrap(),
             Regex::new(r"^\(").unwrap(),
@@ -18,6 +18,9 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             Regex::new(r"^\{").unwrap(),
             Regex::new(r"^\}").unwrap(),
             Regex::new(r"^\;").unwrap(),
+            Regex::new(r"^-").unwrap(),
+            Regex::new(r"^~").unwrap(),
+            Regex::new(r"^!").unwrap(),
         ];
     }
 
@@ -50,6 +53,9 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             7 => tokens::Token::OpenCurlyBrace,
             8 => tokens::Token::CloseCurlyBrace,
             9 => tokens::Token::Semicolon,
+            10 => tokens::Token::Negation,
+            11 => tokens::Token::BitwiseNot,
+            12 => tokens::Token::LogicalNot,
             num => panic!("Unknown regex matched ({})!", num),
         };
 
@@ -149,6 +155,33 @@ mod tests {
             Token::CloseCurlyBrace,
             Token::EOF,
         ];
+        let actual = lexer::lex(s);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_lex_bitwise_not() {
+        let s = "~";
+        let expected: Vec<Token> = vec![Token::BitwiseNot, Token::EOF];
+        let actual = lexer::lex(s);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_lex_logical_not() {
+        let s = "!";
+        let expected: Vec<Token> = vec![Token::LogicalNot, Token::EOF];
+        let actual = lexer::lex(s);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_lex_negation() {
+        let s = "-";
+        let expected: Vec<Token> = vec![Token::Negation, Token::EOF];
         let actual = lexer::lex(s);
 
         assert_eq!(expected, actual);
