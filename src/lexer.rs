@@ -11,7 +11,7 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             Regex::new(r"^\s+").unwrap(), // whitespace
             Regex::new(r"^int").unwrap(),
             Regex::new(r"^return").unwrap(),
-            Regex::new(r"^[a-zA-Z][a-zA-Z0-9]*").unwrap(),
+            Regex::new(r"^[a-zA-Z_][a-zA-Z0-9_]*").unwrap(),
             Regex::new(r"^[0-9]+(?:\.[0-9]+)?").unwrap(),
             Regex::new(r"^\(").unwrap(),
             Regex::new(r"^\)").unwrap(),

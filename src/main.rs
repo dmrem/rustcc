@@ -1,5 +1,6 @@
 mod lexer;
 mod tokens;
+mod parser;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -23,6 +24,8 @@ fn main() {
         }
     };
 
-    let lexed = lexer::lex(file_contents.as_str());
+    let mut lexed = lexer::lex(file_contents.as_str());
     println!("{:#?}", lexed);
+    let parsed = parser::parse(&mut lexed);
+    println!("{:#?}", parsed);
 }
