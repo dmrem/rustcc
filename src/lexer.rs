@@ -9,8 +9,8 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
     lazy_static! {
         static ref REGEXES:Vec<Regex> = vec![
             Regex::new(r"^\s+").unwrap(), // whitespace
-            Regex::new(r"^int").unwrap(),
-            Regex::new(r"^return").unwrap(),
+            Regex::new(r"^int ").unwrap(),
+            Regex::new(r"^return ").unwrap(),
             Regex::new(r"^[a-zA-Z_][a-zA-Z0-9_]*").unwrap(),
             Regex::new(r"^[0-9]+(?:\.[0-9]+)?").unwrap(),
             Regex::new(r"^\(").unwrap(),
@@ -73,7 +73,7 @@ mod tests {
 
     #[test]
     fn test_lex_one_token_keyword_int() {
-        let s = "int";
+        let s = "int ";
         let expected = vec![Token::KeywordInt, Token::EOF];
         let actual = lexer::lex(s);
         assert_eq!(expected, actual);
@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn test_lex_one_token_keyword_return() {
-        let s = "return";
+        let s = "return ";
         let expected = vec![Token::KeywordReturn, Token::EOF];
         let actual = lexer::lex(s);
         assert_eq!(expected, actual);

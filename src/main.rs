@@ -36,6 +36,7 @@ fn main() {
     println!("{}", generated);
 
     let p = Path::new(file_path).with_extension("s");
+    println!("{:?}", p);
     std::fs::write(p, generated).unwrap();
 
 }
