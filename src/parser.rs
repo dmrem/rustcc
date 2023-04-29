@@ -1,5 +1,5 @@
-use std::slice::Iter;
 use crate::tokens::Token;
+use std::slice::Iter;
 
 #[derive(Debug)]
 pub struct Program(pub Function);
@@ -7,11 +7,11 @@ pub struct Program(pub Function);
 pub struct Function(pub String, pub Statement);
 #[derive(Debug)]
 pub enum Statement {
-    Return(Expression)
+    Return(Expression),
 }
 #[derive(Debug)]
 pub enum Expression {
-    Constant(i32)
+    Constant(i32),
 }
 
 pub fn parse(tokens: &mut Vec<Token>) -> Program {
@@ -28,12 +28,12 @@ pub fn parse(tokens: &mut Vec<Token>) -> Program {
 fn parse_function(tokens: &mut Iter<Token>) -> Function {
     let _return_type = match tokens.next().unwrap() {
         Token::KeywordInt => Token::KeywordInt,
-        token => panic!("Expected 'int', but found {:?}", token)
+        token => panic!("Expected 'int', but found {:?}", token),
     };
 
     let identifier = match tokens.next().unwrap() {
         Token::Identifier(s) => s,
-        token => panic!("Expected an identifier, but found {:?}", token)
+        token => panic!("Expected an identifier, but found {:?}", token),
     };
 
     match tokens.next().unwrap() {
@@ -80,5 +80,8 @@ fn parse_expression(tokens: &mut Iter<Token>) -> Expression {
         Token::NumericConstant(s) => s,
         token => panic!("Expected a numeric constant, but found {:?}", token),
     };
-    return Expression::Constant(num.parse().unwrap_or_else(|_| panic!("Failed to parse '{}' as a number", num)))
+    return Expression::Constant(
+        num.parse()
+            .unwrap_or_else(|_| panic!("Failed to parse '{}' as a number", num)),
+    );
 }

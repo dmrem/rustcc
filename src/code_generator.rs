@@ -35,6 +35,6 @@ fn generate_asm_for_statement(statement: Statement) -> String {
 
 fn generate_asm_for_expression(expression: Expression) -> String {
     match expression {
-        Expression::Constant(int) => int.to_string()
+        Expression::Constant(int) => int.to_string(),
     }
 }

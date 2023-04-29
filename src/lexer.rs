@@ -31,7 +31,7 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             let x = REGEXES.iter().enumerate().find(|(_, reg)| reg.is_match(&s));
             match x {
                 Some((pos, regex)) => (pos, regex.captures(s).unwrap()),
-                None => panic!("No regex matched!")
+                None => panic!("No regex matched!"),
             }
         };
 
@@ -128,7 +128,7 @@ mod tests {
             Token::OpenCurlyBrace,
             Token::CloseCurlyBrace,
             Token::Semicolon,
-            Token::EOF
+            Token::EOF,
         ];
         let actual = lexer::lex(s);
         assert_eq!(expected, actual);
@@ -147,7 +147,7 @@ mod tests {
             Token::NumericConstant("2".to_string()),
             Token::Semicolon,
             Token::CloseCurlyBrace,
-            Token::EOF
+            Token::EOF,
         ];
         let actual = lexer::lex(s);
 
