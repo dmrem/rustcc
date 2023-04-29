@@ -1,6 +1,10 @@
+use std::path::Path;
+use crate::code_generator::generate_code;
+
 mod lexer;
 mod tokens;
 mod parser;
+mod code_generator;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -28,4 +32,10 @@ fn main() {
     println!("{:#?}", lexed);
     let parsed = parser::parse(&mut lexed);
     println!("{:#?}", parsed);
+    let generated = generate_code(parsed);
+    println!("{}", generated);
+
+    let p = Path::new(file_path).with_extension("s");
+    std::fs::write(p, generated).unwrap();
+
 }

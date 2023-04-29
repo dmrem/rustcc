@@ -43,8 +43,8 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             }
             1 => tokens::Token::KeywordInt,
             2 => tokens::Token::KeywordReturn,
-            3 => tokens::Token::Identifier(capture[0].to_string()),
-            4 => tokens::Token::NumericConstant(capture[0].to_string()),
+            3 => tokens::Token::Identifier(capture[0].to_owned()),
+            4 => tokens::Token::NumericConstant(capture[0].to_owned()),
             5 => tokens::Token::OpenParenthesis,
             6 => tokens::Token::CloseParenthesis,
             7 => tokens::Token::OpenCurlyBrace,
