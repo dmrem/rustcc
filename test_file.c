@@ -1,3 +1,3 @@
 int main() {
-    return ~-57;
+    return 2 + 2;
 }

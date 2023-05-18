@@ -28,9 +28,9 @@ fn main() {
         }
     };
 
-    let mut lexed = lexer::lex(file_contents.as_str());
+    let lexed = lexer::lex(file_contents.as_str());
     println!("{:#?}", lexed);
-    let parsed = parser::parse(&mut lexed);
+    let parsed = parser::parse(lexed);
     println!("{:#?}", parsed);
     let generated = generate_code(parsed);
     println!("{}", generated);

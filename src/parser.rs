@@ -21,7 +21,7 @@ pub enum Operation {
     LogicalNot,
 }
 
-pub fn parse(tokens: &mut [Token]) -> Program {
+pub fn parse(tokens: Vec<Token>) -> Program {
     let mut iter = tokens.iter();
     let f = parse_function(&mut iter);
     match iter.next().unwrap() {
@@ -89,13 +89,13 @@ fn parse_expression(tokens: &mut Iter<Token>) -> Expression {
             s.parse()
                 .unwrap_or_else(|_| panic!("Failed to parse '{}' as a number", s)),
         ),
-        Token::Negation => {
+        Token::Minus => {
             Expression::UnaryOperation(Operation::Negation, Box::from(parse_expression(tokens)))
         }
-        Token::BitwiseNot => {
+        Token::Tilde => {
             Expression::UnaryOperation(Operation::BitwiseNot, Box::from(parse_expression(tokens)))
         }
-        Token::LogicalNot => {
+        Token::ExclamationPoint => {
             Expression::UnaryOperation(Operation::LogicalNot, Box::from(parse_expression(tokens)))
         }
         token => panic!(

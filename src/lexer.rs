@@ -21,6 +21,9 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             Regex::new(r"^-").unwrap(),
             Regex::new(r"^~").unwrap(),
             Regex::new(r"^!").unwrap(),
+            Regex::new(r"^\+").unwrap(),
+            Regex::new(r"^\*").unwrap(),
+            Regex::new(r"^/").unwrap(),
         ];
     }
 
@@ -53,9 +56,12 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             7 => tokens::Token::OpenCurlyBrace,
             8 => tokens::Token::CloseCurlyBrace,
             9 => tokens::Token::Semicolon,
-            10 => tokens::Token::Negation,
-            11 => tokens::Token::BitwiseNot,
-            12 => tokens::Token::LogicalNot,
+            10 => tokens::Token::Minus,
+            11 => tokens::Token::Tilde,
+            12 => tokens::Token::ExclamationPoint,
+            13 => tokens::Token::Plus,
+            14 => tokens::Token::Asterisk,
+            15 => tokens::Token::ForwardSlash,
             num => panic!("Unknown regex matched ({})!", num),
         };
 
@@ -163,7 +169,7 @@ mod tests {
     #[test]
     fn test_lex_bitwise_not() {
         let s = "~";
-        let expected: Vec<Token> = vec![Token::BitwiseNot, Token::EOF];
+        let expected: Vec<Token> = vec![Token::Tilde, Token::EOF];
         let actual = lexer::lex(s);
 
         assert_eq!(expected, actual);
@@ -172,7 +178,7 @@ mod tests {
     #[test]
     fn test_lex_logical_not() {
         let s = "!";
-        let expected: Vec<Token> = vec![Token::LogicalNot, Token::EOF];
+        let expected: Vec<Token> = vec![Token::ExclamationPoint, Token::EOF];
         let actual = lexer::lex(s);
 
         assert_eq!(expected, actual);
@@ -181,7 +187,34 @@ mod tests {
     #[test]
     fn test_lex_negation() {
         let s = "-";
-        let expected: Vec<Token> = vec![Token::Negation, Token::EOF];
+        let expected: Vec<Token> = vec![Token::Minus, Token::EOF];
+        let actual = lexer::lex(s);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_lex_plus() {
+        let s = "+";
+        let expected: Vec<Token> = vec![Token::Plus, Token::EOF];
+        let actual = lexer::lex(s);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_lex_times() {
+        let s = "*";
+        let expected: Vec<Token> = vec![Token::Asterisk, Token::EOF];
+        let actual = lexer::lex(s);
+
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_lex_divide() {
+        let s = "/";
+        let expected: Vec<Token> = vec![Token::ForwardSlash, Token::EOF];
         let actual = lexer::lex(s);
 
         assert_eq!(expected, actual);
