@@ -1,4 +1,6 @@
-use crate::code_generator::AsmToken::{InstructionNoArgs, InstructionOneArg, InstructionTwoArgs, FunctionStart};
+use crate::code_generator::AsmToken::{
+    FunctionStart, InstructionNoArgs, InstructionOneArg, InstructionTwoArgs,
+};
 use crate::parser::{Expression, Function, Operation, Program, Statement};
 
 enum AsmToken {
@@ -8,7 +10,7 @@ enum AsmToken {
     InstructionTwoArgs(String, String, String),
 }
 
-struct AsmProgram (pub Vec<AsmToken>);
+struct AsmProgram(pub Vec<AsmToken>);
 
 impl From<&AsmToken> for String {
     fn from(value: &AsmToken) -> Self {
@@ -16,14 +18,21 @@ impl From<&AsmToken> for String {
             FunctionStart(name) => format!(".globl {}\n{}:", name, name),
             InstructionNoArgs(instruction) => format!("  {}", instruction),
             InstructionOneArg(instruction, arg) => format!("  {} {}", instruction, arg),
-            InstructionTwoArgs(instruction, arg1, arg2) => format!("  {} {}, {}", instruction, arg1, arg2),
+            InstructionTwoArgs(instruction, arg1, arg2) => {
+                format!("  {} {}, {}", instruction, arg1, arg2)
+            }
         }
     }
 }
 
 impl From<AsmProgram> for String {
     fn from(value: AsmProgram) -> Self {
-        value.0.iter().map(|token| token.into()).collect::<Vec<String>>().join("\n")
+        value
+            .0
+            .iter()
+            .map(|token| token.into())
+            .collect::<Vec<String>>()
+            .join("\n")
     }
 }
 
@@ -53,27 +62,31 @@ fn generate_asm_for_statement(statement: Statement) -> Vec<AsmToken> {
 
 fn generate_asm_for_expression(expression: Expression) -> Vec<AsmToken> {
     match expression {
-        Expression::Constant(int) => vec![InstructionTwoArgs("movl".into(), int.to_string(), "%eax".into())],
+        Expression::Constant(int) => vec![InstructionTwoArgs(
+            "movl".into(),
+            int.to_string(),
+            "%eax".into(),
+        )],
         Expression::UnaryOperation(op, exp) => match op {
             Operation::Negation => {
                 let mut x = generate_asm_for_expression(*exp);
                 x.extend(vec![InstructionOneArg("neg".into(), "%eax".into())]);
                 x
-            },
+            }
             Operation::BitwiseNot => {
                 let mut x = generate_asm_for_expression(*exp);
                 x.extend(vec![InstructionOneArg("not".into(), "%eax".into())]);
                 x
-            },
+            }
             Operation::LogicalNot => {
                 let mut x = generate_asm_for_expression(*exp);
                 x.extend(vec![
                     InstructionTwoArgs("cmpl".into(), "$0".into(), "%eax".into()),
-                    InstructionTwoArgs("movl".into(), "$0".into(),"%eax".into()),
+                    InstructionTwoArgs("movl".into(), "$0".into(), "%eax".into()),
                     InstructionOneArg("sete".into(), "%al".into()),
                 ]);
                 x
-            },
+            }
         },
     }
 }

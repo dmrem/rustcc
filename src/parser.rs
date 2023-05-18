@@ -3,17 +3,21 @@ use std::slice::Iter;
 
 #[derive(Debug)]
 pub struct Program(pub Function);
+
 #[derive(Debug)]
 pub struct Function(pub String, pub Statement);
+
 #[derive(Debug)]
 pub enum Statement {
     Return(Expression),
 }
+
 #[derive(Debug)]
 pub enum Expression {
     Constant(i32),
     UnaryOperation(Operation, Box<Expression>),
 }
+
 #[derive(Debug)]
 pub enum Operation {
     Negation,
