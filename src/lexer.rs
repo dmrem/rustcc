@@ -17,7 +17,7 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             Regex::new(r"^\)").unwrap(),
             Regex::new(r"^\{").unwrap(),
             Regex::new(r"^\}").unwrap(),
-            Regex::new(r"^\;").unwrap(),
+            Regex::new(r"^;").unwrap(),
             Regex::new(r"^-").unwrap(),
             Regex::new(r"^~").unwrap(),
             Regex::new(r"^!").unwrap(),
@@ -25,13 +25,13 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
     }
 
     loop {
-        if s.len() == 0 {
+        if s.is_empty() {
             curr_list.push(tokens::Token::EOF);
             return curr_list;
         }
 
         let (matched_regex, capture) = {
-            let x = REGEXES.iter().enumerate().find(|(_, reg)| reg.is_match(&s));
+            let x = REGEXES.iter().enumerate().find(|(_, reg)| reg.is_match(s));
             match x {
                 Some((pos, regex)) => (pos, regex.captures(s).unwrap()),
                 None => panic!("No regex matched!"),

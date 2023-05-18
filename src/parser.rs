@@ -21,7 +21,7 @@ pub enum Operation {
     LogicalNot,
 }
 
-pub fn parse(tokens: &mut Vec<Token>) -> Program {
+pub fn parse(tokens: &mut [Token]) -> Program {
     let mut iter = tokens.iter();
     let f = parse_function(&mut iter);
     match iter.next().unwrap() {
@@ -29,7 +29,8 @@ pub fn parse(tokens: &mut Vec<Token>) -> Program {
         token => panic!("Expected EOF, but found {:?}", token),
     };
     let None = iter.next() else { panic!("Found tokens after EOF!") };
-    return Program(f);
+
+    Program(f)
 }
 
 fn parse_function(tokens: &mut Iter<Token>) -> Function {
@@ -64,7 +65,7 @@ fn parse_function(tokens: &mut Iter<Token>) -> Function {
         token => panic!("Expected '}}', but found {:?}", token),
     };
 
-    return Function(identifier.to_owned(), s);
+    Function(identifier.to_owned(), s)
 }
 
 fn parse_statement(tokens: &mut Iter<Token>) -> Statement {
@@ -79,11 +80,11 @@ fn parse_statement(tokens: &mut Iter<Token>) -> Statement {
         Token::Semicolon => (),
         token => panic!("Expected ';', but found {:?}", token),
     };
-    return Statement::Return(e);
+    Statement::Return(e)
 }
 
 fn parse_expression(tokens: &mut Iter<Token>) -> Expression {
-    return match tokens.next().unwrap() {
+    match tokens.next().unwrap() {
         Token::NumericConstant(s) => Expression::Constant(
             s.parse()
                 .unwrap_or_else(|_| panic!("Failed to parse '{}' as a number", s)),
@@ -101,5 +102,5 @@ fn parse_expression(tokens: &mut Iter<Token>) -> Expression {
             "Expected a numeric constant or expression, but found {:?}",
             token
         ),
-    };
+    }
 }

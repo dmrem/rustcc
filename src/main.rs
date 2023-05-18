@@ -12,10 +12,10 @@ fn main() {
         panic!("Please provide a file name");
     };
 
-    let file_contents = match std::fs::read_to_string(&file_path) {
+    let file_contents = match std::fs::read_to_string(file_path) {
         Ok(str) => str,
         Err(e) => {
-            eprintln!("Could not open the file at \"{}\"", &file_path);
+            eprintln!("Could not open the file at \"{}\"", file_path);
             eprintln!("Error: {}", e);
             match std::env::current_dir() {
                 Ok(dir) => eprintln!("Current working directory is {}", dir.display()),
