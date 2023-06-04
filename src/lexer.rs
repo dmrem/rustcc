@@ -37,7 +37,7 @@ pub fn lex(input_str: &str) -> Vec<tokens::Token> {
             let x = REGEXES.iter().enumerate().find(|(_, reg)| reg.is_match(s));
             match x {
                 Some((pos, regex)) => (pos, regex.captures(s).unwrap()),
-                None => panic!("No regex matched!"),
+                None => panic!("No regex matched! s={}", s),
             }
         };
 

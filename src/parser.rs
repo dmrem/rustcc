@@ -1,4 +1,8 @@
+use crate::parser::BinaryOperation::{Add, Divide, Multiply, Subtract};
+use crate::parser::Expression::{BinaryOpExpression, Constant, UnaryOpExpression};
+use crate::parser::UnaryOperation::{BitwiseNot, LogicalNot, Negation};
 use crate::tokens::Token;
+use std::iter::Peekable;
 use std::slice::Iter;
 
 #[derive(Debug)]
@@ -15,29 +19,38 @@ pub enum Statement {
 #[derive(Debug)]
 pub enum Expression {
     Constant(i32),
-    UnaryOperation(Operation, Box<Expression>),
+    UnaryOpExpression(UnaryOperation, Box<Expression>),
+    BinaryOpExpression(BinaryOperation, Box<Expression>, Box<Expression>),
 }
 
 #[derive(Debug)]
-pub enum Operation {
+pub enum UnaryOperation {
     Negation,
     BitwiseNot,
     LogicalNot,
 }
 
+#[derive(Debug)]
+pub enum BinaryOperation {
+    Add,
+    Subtract,
+    Multiply,
+    Divide,
+}
+
 pub fn parse(tokens: Vec<Token>) -> Program {
-    let mut iter = tokens.iter();
+    let mut iter = tokens.iter().peekable();
     let f = parse_function(&mut iter);
     match iter.next().unwrap() {
         Token::EOF => (),
         token => panic!("Expected EOF, but found {:?}", token),
     };
-    let None = iter.next() else { panic!("Found tokens after EOF!") };
+    if let Some(token) = iter.next() { panic!("Found token after EOF: {:?}", token) };
 
     Program(f)
 }
 
-fn parse_function(tokens: &mut Iter<Token>) -> Function {
+fn parse_function(tokens: &mut Peekable<Iter<Token>>) -> Function {
     let _return_type = match tokens.next().unwrap() {
         Token::KeywordInt => Token::KeywordInt,
         token => panic!("Expected 'int', but found {:?}", token),
@@ -72,7 +85,7 @@ fn parse_function(tokens: &mut Iter<Token>) -> Function {
     Function(identifier.to_owned(), s)
 }
 
-fn parse_statement(tokens: &mut Iter<Token>) -> Statement {
+fn parse_statement(tokens: &mut Peekable<Iter<Token>>) -> Statement {
     match tokens.next().unwrap() {
         Token::KeywordReturn => (),
         token => panic!("Expected 'return', but found {:?}", token),
@@ -87,24 +100,48 @@ fn parse_statement(tokens: &mut Iter<Token>) -> Statement {
     Statement::Return(e)
 }
 
-fn parse_expression(tokens: &mut Iter<Token>) -> Expression {
+fn parse_expression(tokens: &mut Peekable<Iter<Token>>) -> Expression {
+    let mut term = parse_term(tokens);
+    while let Some(Token::Plus) | Some(Token::Minus) = tokens.peek() {
+        let op = match tokens.next() {
+            Some(Token::Plus) => Add,
+            Some(Token::Minus) => Subtract,
+            _ => panic!("This will never happen"),
+        };
+        let next_term = parse_term(tokens);
+        term = BinaryOpExpression(op, Box::from(term), Box::from(next_term));
+    }
+    term
+}
+
+fn parse_term(tokens: &mut Peekable<Iter<Token>>) -> Expression {
+    let mut factor = parse_factor(tokens);
+    while let Some(Token::Asterisk) | Some(Token::ForwardSlash) = tokens.peek() {
+        let op = match tokens.next() {
+            Some(Token::Asterisk) => Multiply,
+            Some(Token::ForwardSlash) => Divide,
+            _ => panic!("This will never happen"),
+        };
+        let next_factor = parse_factor(tokens);
+        factor = BinaryOpExpression(op, Box::from(factor), Box::from(next_factor));
+    }
+    factor
+}
+
+fn parse_factor(tokens: &mut Peekable<Iter<Token>>) -> Expression {
     match tokens.next().unwrap() {
-        Token::NumericConstant(s) => Expression::Constant(
-            s.parse()
-                .unwrap_or_else(|_| panic!("Failed to parse '{}' as a number", s)),
-        ),
-        Token::Minus => {
-            Expression::UnaryOperation(Operation::Negation, Box::from(parse_expression(tokens)))
+        Token::OpenParenthesis => {
+            let expression = parse_expression(tokens);
+            match tokens.next().unwrap() {
+                Token::CloseParenthesis => expression,
+                token => panic!("Expected ')', but found {:?}", token),
+            }
         }
-        Token::Tilde => {
-            Expression::UnaryOperation(Operation::BitwiseNot, Box::from(parse_expression(tokens)))
-        }
-        Token::ExclamationPoint => {
-            Expression::UnaryOperation(Operation::LogicalNot, Box::from(parse_expression(tokens)))
-        }
-        token => panic!(
-            "Expected a numeric constant or expression, but found {:?}",
-            token
-        ),
+        Token::Minus => UnaryOpExpression(Negation, Box::from(parse_factor(tokens))),
+        Token::Tilde => UnaryOpExpression(BitwiseNot, Box::from(parse_factor(tokens))),
+        Token::ExclamationPoint => UnaryOpExpression(LogicalNot, Box::from(parse_factor(tokens))),
+
+        Token::NumericConstant(s) => Constant(s.parse::<i32>().unwrap()),
+        t => panic!("Could not parse expression! Next token: {:?}", t),
     }
 }

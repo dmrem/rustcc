@@ -1,6 +1,3 @@
-use crate::code_generator::generate_code;
-use std::path::Path;
-
 mod code_generator;
 mod lexer;
 mod parser;
@@ -32,10 +29,10 @@ fn main() {
     println!("{:#?}", lexed);
     let parsed = parser::parse(lexed);
     println!("{:#?}", parsed);
-    let generated = generate_code(parsed);
+    let generated = code_generator::generate_code(parsed);
     println!("{}", generated);
 
-    let p = Path::new(file_path).with_extension("s");
+    let p = std::path::Path::new(file_path).with_extension("s");
     println!("{:?}", p);
     std::fs::write(p, generated).unwrap();
 }

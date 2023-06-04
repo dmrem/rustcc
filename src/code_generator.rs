@@ -1,7 +1,7 @@
 use crate::code_generator::AsmToken::{
     FunctionStart, InstructionNoArgs, InstructionOneArg, InstructionTwoArgs,
 };
-use crate::parser::{Expression, Function, Operation, Program, Statement};
+use crate::parser::{Expression, Function, Program, Statement};
 
 enum AsmToken {
     FunctionStart(String),
@@ -50,43 +50,45 @@ fn generate_asm_for_function(function: Function) -> Vec<AsmToken> {
 }
 
 fn generate_asm_for_statement(statement: Statement) -> Vec<AsmToken> {
-    match statement {
-        Statement::Return(expression) => {
-            let mut x = vec![];
-            x.extend(generate_asm_for_expression(expression));
-            x.push(InstructionNoArgs("ret".into()));
-            x
-        }
-    }
+    unimplemented!()
+    // match statement {
+    //     Statement::Return(expression) => {
+    //         let mut x = vec![];
+    //         x.extend(generate_asm_for_expression(expression));
+    //         x.push(InstructionNoArgs("ret".into()));
+    //         x
+    //     }
+    // }
 }
 
 fn generate_asm_for_expression(expression: Expression) -> Vec<AsmToken> {
-    match expression {
-        Expression::Constant(int) => vec![InstructionTwoArgs(
-            "movl".into(),
-            int.to_string(),
-            "%eax".into(),
-        )],
-        Expression::UnaryOperation(op, exp) => match op {
-            Operation::Negation => {
-                let mut x = generate_asm_for_expression(*exp);
-                x.extend(vec![InstructionOneArg("neg".into(), "%eax".into())]);
-                x
-            }
-            Operation::BitwiseNot => {
-                let mut x = generate_asm_for_expression(*exp);
-                x.extend(vec![InstructionOneArg("not".into(), "%eax".into())]);
-                x
-            }
-            Operation::LogicalNot => {
-                let mut x = generate_asm_for_expression(*exp);
-                x.extend(vec![
-                    InstructionTwoArgs("cmpl".into(), "$0".into(), "%eax".into()),
-                    InstructionTwoArgs("movl".into(), "$0".into(), "%eax".into()),
-                    InstructionOneArg("sete".into(), "%al".into()),
-                ]);
-                x
-            }
-        },
-    }
+    unimplemented!()
+    // match expression {
+    //     Expression::Constant(int) => vec![InstructionTwoArgs(
+    //         "movl".into(),
+    //         int.to_string(),
+    //         "%eax".into(),
+    //     )],
+    //     Expression::UnaryOperation(op, exp) => match op {
+    //         UnaryOperation::Negation => {
+    //             let mut x = generate_asm_for_expression(*exp);
+    //             x.extend(vec![InstructionOneArg("neg".into(), "%eax".into())]);
+    //             x
+    //         }
+    //         UnaryOperation::BitwiseNot => {
+    //             let mut x = generate_asm_for_expression(*exp);
+    //             x.extend(vec![InstructionOneArg("not".into(), "%eax".into())]);
+    //             x
+    //         }
+    //         UnaryOperation::LogicalNot => {
+    //             let mut x = generate_asm_for_expression(*exp);
+    //             x.extend(vec![
+    //                 InstructionTwoArgs("cmpl".into(), "$0".into(), "%eax".into()),
+    //                 InstructionTwoArgs("movl".into(), "$0".into(), "%eax".into()),
+    //                 InstructionOneArg("sete".into(), "%al".into()),
+    //             ]);
+    //             x
+    //         }
+    //     },
+    // }
 }
