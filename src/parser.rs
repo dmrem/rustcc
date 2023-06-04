@@ -9,7 +9,7 @@ use std::slice::Iter;
 pub struct Program(pub Function);
 
 #[derive(Debug)]
-pub struct Function(pub String, pub Statement);
+pub struct Function(pub &'static str, pub Statement);
 
 #[derive(Debug)]
 pub enum Statement {
